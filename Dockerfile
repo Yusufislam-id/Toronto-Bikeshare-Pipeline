@@ -1,9 +1,9 @@
-FROM python:3.9
-
-COPY data /app/data
-RUN pip install pandas sqlalchemy psycopg2
+FROM python:3.12
 
 WORKDIR /app
-COPY data_ingestion.py data_ingestion.py
+COPY requirements.txt requirements.txt
+COPY upload-data.py download-data.py
 
-ENTRYPOINT [ "python" , "data_ingestion.py" ]
+RUN pip install -r requirements.txt
+
+ENTRYPOINT [ "python" , "download-data.py" ]
