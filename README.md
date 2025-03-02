@@ -12,15 +12,15 @@ The Bikeshare ridership project is a comprehensive data engineering and analytic
 
 ## Expected Benefits:
 
-# Project Architecture Overview
+<!-- # Project Architecture Overview
 
 ## Data Flow
 
 ## Other Features
 
-## Additional Benefits
+## Additional Benefits -->
 
-## Tech Stack Used
+<!-- ## Tech Stack Used
 
 ## Pipeline Overview
 
@@ -30,4 +30,4 @@ The Bikeshare ridership project is a comprehensive data engineering and analytic
 
 ### 3. DBT Pipeline
 
-### 4. Dockerized Services
+### 4. Dockerized Services -->
