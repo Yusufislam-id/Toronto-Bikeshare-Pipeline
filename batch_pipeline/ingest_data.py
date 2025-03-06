@@ -2,10 +2,12 @@ import requests
 import zipfile
 import os
 
+data_year = "2023"
+
 base_url = "https://ckan0.cf.opendata.inter.prod-toronto.ca"
 package_id = "bike-share-toronto-ridership-data"
 data_folder = "./data"
-data_year = "2023"
+zip_file_path = f"./data/bikeshare-ridership-{data_year}.zip"
 
 # Get package information(json). Fetch package metadata from CKAN API.
 def fetch_package_data(package_id):
@@ -60,7 +62,30 @@ def download_resource(data_year):
                 else:
                     print(f"Failed to download {resource_name}\n")
 
-def extract_data(zip_path):
+# Extract zip
+def extract_zip(zip_path, extract_to):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        zip_ref.extractall(data_folder)
+        zip_ref.extractall(extract_to)
     os.remove(zip_path)
+
+# Check extracted data
+def process_directory(directory):
+    for root, dirs, files in os.walk(directory, topdown=False):  # Ensure directories are processed last
+        for file in files:
+            file_path = os.path.join(root, file)
+            if file.endswith('.zip'):
+                print(f"Extracting {file_path}")
+                extract_zip(file_path, root)
+        
+        # Ensure only CSV files remain
+        for file in os.listdir(root):
+            file_path = os.path.join(root, file)
+            if os.path.isdir(file_path):
+                continue  # Skip directories
+            if not file.endswith('.csv'):
+                print(f"Removing non-CSV file: {file_path}")
+                os.remove(file_path)
+
+
+download_resource(data_year)
+process_directory(data_folder)
