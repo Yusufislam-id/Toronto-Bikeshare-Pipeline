@@ -30,11 +30,16 @@ def download_resource(data_year):
         print("Error: Unable to fetch package data.")
         return  # Safely break execution
 
-    # Check data exist
+    # Check zip data exist
     if os.path.exists(f"data/bikeshare-ridership-{data_year}.zip"):
         print(f'bikeshare-ridership-{data_year}.zip exist')
         return
-       
+    
+    # Check zip data exist
+    if os.path.exists(f"data/bikeshare-ridership-{data_year}"):
+        print(f'bikeshare-ridership-{data_year} exist')
+        return
+    
     # Iterate through resources and download matching files
     for resource in package["result"]["resources"]:
         if not resource["datastore_active"]:
