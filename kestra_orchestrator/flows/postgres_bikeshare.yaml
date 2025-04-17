@@ -1,0 +1,65 @@
+id: postgres_bikeshare
+namespace: bikeshare
+
+variables:
+  data: "ridershipdata_2023"
+  uri: "https://ckan0.cf.opendata.inter.prod-toronto.ca/dataset/7e876c24-177c-4605-9cef-e50dd74c617f/resource/f0fa6a67-4571-4dd6-9d5a-df010ebed7d1/download/bikeshare-ridership-2023.zip"
+
+tasks:
+  - id: download
+    type: "io.kestra.plugin.core.http.Download"
+    uri: "{{ vars.uri }}"
+
+  - id: extract
+    type: io.kestra.plugin.scripts.shell.Commands
+    outputFiles:
+      - bikeshare-ridership-2023/*.csv
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - unzip {{ outputs.download.uri }}
+      - |
+        for f in bikeshare-ridership-2023/*.csv; do
+          newname=$(echo "$f" | tr ' ' '_')
+          mv "$f" "$newname"
+        done
+
+  - id: create_table
+    type: io.kestra.plugin.jdbc.postgresql.Queries
+    url: jdbc:postgresql://postgres:5432/postgres
+    username: kestra
+    password: k3str4
+    sql: |
+          CREATE TABLE IF NOT EXISTS bikeshare_ridership_2023 (
+            trip_id INTEGER,
+            trip_duration INTEGER,
+            start_station_id INTEGER,
+            start_time TIMESTAMP,
+            start_station_name TEXT,
+            end_station_id INTEGER,
+            end_time TIMESTAMP,
+            end_station_name TEXT,
+            bike_id INTEGER,
+            user_type VARCHAR(50)
+          );
+
+  - id: load_csvs
+    type: io.kestra.plugin.core.flow.ForEach
+    values: "{{ outputs.extract.outputFiles | values }}"
+    tasks:
+    - id: copy_to_postgres
+      type: io.kestra.plugin.jdbc.postgresql.CopyIn
+      url: jdbc:postgresql://postgres:5432/postgres
+      username: kestra
+      password: k3str4
+      format: CSV
+      from: "{{ taskrun.value }}"
+      table: bikeshare_ridership_2023
+      header: true
+      nullString: "NULL"
+  
+  - id: purge_files
+    type: io.kestra.plugin.core.storage.PurgeCurrentExecutionFiles
+    description: If you'd like to explore Kestra outputs, disable it.
+    disabled: false
+
