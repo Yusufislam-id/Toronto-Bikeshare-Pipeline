@@ -1,7 +1,15 @@
 id: 00_gcp_kv
-namespace: zoomcamp
+namespace: bikeshare
 
 tasks:
+  - id: gcp_creds
+    type: io.kestra.plugin.core.kv.Set
+    key: GCP_CREDS
+    kvType: JSON
+    value: |
+      { #your gcp credentials
+      }
+  
   - id: gcp_project_id
     type: io.kestra.plugin.core.kv.Set
     key: GCP_PROJECT_ID
@@ -12,7 +20,7 @@ tasks:
     type: io.kestra.plugin.core.kv.Set
     key: GCP_LOCATION
     kvType: STRING
-    value: US
+    value: us-central1
 
   - id: gcp_bucket_name
     type: io.kestra.plugin.core.kv.Set
