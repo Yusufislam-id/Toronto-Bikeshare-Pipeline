@@ -31,8 +31,14 @@ tasks:
     - id: upload_to_gcs
       type: io.kestra.plugin.gcp.gcs.Upload
       from: "{{ taskrun.value }}"
-      to: "gs://tbikeshare/{{ vars.data }}/{{ taskrun.value | split('/') | last }}"
-
+      to: >-
+        {{
+          'gs://tbikeshare/ridershipdata_2023/' ~ (
+            (taskrun.value | split('/') | last | split('-') | length > 1)
+              ? (taskrun.value | split('/') | last | split('-') | slice(1) | join('-'))
+              : (taskrun.value | split('/') | last)
+          )
+        }}
   
   - id: purge_files
     type: io.kestra.plugin.core.storage.PurgeCurrentExecutionFiles
