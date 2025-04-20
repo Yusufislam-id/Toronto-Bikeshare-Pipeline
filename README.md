@@ -88,13 +88,18 @@ curl -X POST http://localhost:8080/api/v1/flows/import -F fileUpload=@flows/01_g
 curl -X POST http://localhost:8080/api/v1/flows/import -F fileUpload=@flows/02_gcp_bikeshare.yaml
 ```
 
-1. run command above to import all flows into Kestra
-2. copy your key to 00_gcp_kv.yaml on task id: gcp_creds
-3. execute 00_gcp_kv.yaml to set up your key_value, proj_id, loc, bucket, dataset
-4. execute 01_gcp_setup.yaml to create storage & dataset
-5. execute 02_gcp_bikeshare.yaml to run the pipeline
+1. run command above to import all flows into Kestra.
+2. copy your key to 00_gcp_kv.yaml on task id: gcp_creds.
+3. execute 00_gcp_kv.yaml to set up your key_value, proj_id, loc, bucket, dataset.
+4. execute 01_gcp_setup.yaml to create storage & dataset.
+5. execute 02_gcp_bikeshare.yaml to run the pipeline.
 
 ### 4. Simple Transformation
+
+1. run sql query from sql folder.
+2. 01_create_external_table_from_gcs, to create external table.
+3. 02_parse_and_clean_data, to parse and clean data.
+4. 03_create_partitioned_and_clustered, to create partitioned table by start_time and clustered by user_type, start_station_id
 
 ### 5. Build Dashboard with Looker Studio
 
@@ -103,3 +108,6 @@ curl -X POST http://localhost:8080/api/v1/flows/import -F fileUpload=@flows/02_g
 3. Build interactive visualizations for:
    - Trip frequency
    - Monthly trends
+
+<img src="dashboard/data_viz.png">
+url: https://lookerstudio.google.com/reporting/a77d6cd9-10d0-41c4-a8ac-dfd615370059
